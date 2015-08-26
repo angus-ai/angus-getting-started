@@ -6,6 +6,8 @@ if __name__ == '__main__':
     ### Web cam index might be different from 0 on your setup.
     stream_index = 0 
     cap = cv2.VideoCapture(stream_index)
+    cap.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480);
 
     if not cap.isOpened():
         print "Cannot open stream of index " + str(stream_index)
