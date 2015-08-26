@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     conn = angus.connect()
     service = conn.services.get_service('face_expression_estimation', 1)
-    service.enable_session()
+    #service.enable_session()
     
     while(cap.isOpened()):
         ret, frame = cap.read()
@@ -54,14 +54,22 @@ if __name__ == '__main__':
                     exp_sorted = sorted(exp.items(), key=operator.itemgetter(1))    
                     exp_sorted.reverse()
                     max_exp = exp_sorted[0]                    
-                    
-                    cv2.putText(frame, 
-                                str(max_exp[0]), 
-                                (int(roi[0]), int(roi[1])), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 
-                                1, 
-                                (255, 255, 255))
-                    
+
+                    if max_exp[1] > 0.5:
+                        cv2.putText(frame,
+                                    str(max_exp[0]),
+                                    (int(roi[0]), int(roi[1])),
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    1,
+                                    (255, 255, 255))
+                    else:
+                        cv2.putText(frame,
+                                    str("-"),
+                                    (int(roi[0]), int(roi[1])),
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    1,
+                                    (255, 255, 255))
+
             cv2.imshow('original', frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
