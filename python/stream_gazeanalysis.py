@@ -16,7 +16,6 @@ if __name__ == '__main__':
     cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480);
 
     print "Input stream is of resolution: " + str(cap.get(3)) + " x " + str(cap.get(4))
-
     conn = angus.connect()
     service = conn.services.get_service('gaze_analysis', 1)
     service.enable_session()
@@ -63,7 +62,7 @@ if __name__ == '__main__':
                     cv2.line(frame, center, (center[0]+vec[0], center[1]+vec[1]), (255, 0, 0), 3)
             
 
-            cv2.imshow('original', frame)
+            cv2.imshow('Gaze Analysis', frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
