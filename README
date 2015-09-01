@@ -18,11 +18,13 @@ Directories:
 
 .
 ├── python
-│   ├── macgyver.jpg
-│   ├── simple.py
+│   └── images/
+│   └── sounds/
+│   └── simple.py
 │   └── stream_agegender.py
 │   └── stream_facedetection.py
 │   └── stream_faceexpression.py
 │   └── stream_gazeanalysis.py
 │   └── stream_motion.py
+│   └── stream_wordspotting.py
 └── README
