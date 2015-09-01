@@ -9,6 +9,7 @@ import angus
 import pyaudio
 import os
 import operator
+import json
 
 CHUNK = 8192
 FORMAT = pyaudio.paInt16
@@ -90,8 +91,7 @@ while(True):
     convert(WAVE_OUTPUT_FILENAME, "test.wav")
 
     job = service.process({'sound': open("test.wav"), 'sensitivity':0.7})
-    if job.result['Result'] != 'None':
-        print job.result
+    print json.dumps(job.result, indent=4)
 
 
 stream.stop_stream()
