@@ -93,7 +93,7 @@ while(True):
 
     convert(WAVE_OUTPUT_FILENAME, "test.wav")
 
-    job = service.process({'sound': open("test.wav"), 'sensitivity':0.7})
+    job = service.process({'sound': open("test.wav"), 'sensitivity':0.7, "lang": "fr-FR"})
     print json.dumps(job.result, indent=4)
 
 
