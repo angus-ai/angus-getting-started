@@ -11,7 +11,7 @@ import os
 import operator
 import json
 
-CHUNK = 8192
+CHUNK = 8192*2
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
@@ -78,6 +78,9 @@ while(True):
     if nb_buffer_available == 0:
         time.sleep(0.01)
         continue
+
+    if nb_buffer_available > 5:
+        stream_queue.queue.clear()
 
     data = stream_queue.get()
 
