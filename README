@@ -24,7 +24,9 @@ Directories:
 │   └── stream_agegender.py
 │   └── stream_facedetection.py
 │   └── stream_faceexpression.py
+│   └── stream_facerecognition.py
 │   └── stream_gazeanalysis.py
 │   └── stream_motion.py
 │   └── stream_wordspotting.py
+│   └── texttospeech.py
 └── README
