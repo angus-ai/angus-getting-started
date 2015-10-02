@@ -28,27 +28,16 @@ p = pyaudio.PyAudio()
 devinfo = p.get_device_info_by_index(INDEX)
 print devinfo
 
-
 for i in range(p.get_device_count()):
   dev = p.get_device_info_by_index(i)
   print((i,dev['name'],dev['maxInputChannels']))
 
 conn = angus.connect()
-service = conn.services.get_service('word_spotting', version=1)
+service = conn.services.get_service('word_spotting', version=2)
 
-PATH = os.path.dirname(__file__)
-
-w1_s1 = conn.blobs.create(open(PATH + "sounds/allumelesalon.wav"))
-w1_s2 = conn.blobs.create(open(PATH + "sounds/allumelesalon2.wav"))
-w1_s3 = conn.blobs.create(open(PATH + "sounds/allumelesalon3.wav"))
-w1_s4 = conn.blobs.create(open(PATH + "sounds/allumelesalon4.wav"))
-
-w2_s1 = conn.blobs.create(open(PATH + "sounds/eteintlewifi.wav"))
-w2_s2 = conn.blobs.create(open(PATH + "sounds/eteintlewifi2.wav"))
-w2_s3 = conn.blobs.create(open(PATH + "sounds/eteintlewifi3.wav"))
-w2_s4 = conn.blobs.create(open(PATH + "sounds/eteintlewifi4.wav"))
-
-vocabulary = {'allume le salon': [w1_s1, w1_s2, w1_s3, w1_s4], 'eteint le wifi': [w2_s1, w2_s2, w2_s3, w2_s4]}
+vocabulary = [{"words" : "hello"},
+              {"words" : "music"},
+              {"words" : "whisky"}]
 
 service.enable_session({"vocabulary" : vocabulary})
 
@@ -93,8 +82,9 @@ while(True):
 
     convert(WAVE_OUTPUT_FILENAME, "test.wav")
 
-    job = service.process({'sound': open("test.wav"), 'sensitivity':0.7, "lang": "fr-FR"})
-    print json.dumps(job.result, indent=4)
+    job = service.process({'sound': open("test.wav"), 'sensitivity':0.7, "lang": "en-US"})
+    if "nbests" in job.result:
+        print json.dumps(job.result, indent=4)
 
 
 stream.stop_stream()
