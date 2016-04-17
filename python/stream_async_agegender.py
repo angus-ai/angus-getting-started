@@ -4,14 +4,15 @@ import cv2
 import angus
 import numpy as np
 import time
+from Queue import Empty
 from multiprocessing import Process, Queue
 
-def angus_process(q_in, q_out):
+def angus_process(q_in, q_out, fps):
     frame = q_in.get()
     while frame is not None:
+        t0 = time.time()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret, buff = cv2.imencode(".jpg", gray)
-
         buff = StringIO.StringIO(np.array(buff).tostring())
         job = service.process({"image": buff})
         res = job.result
@@ -19,6 +20,8 @@ def angus_process(q_in, q_out):
         frame = q_in.get()
         for k in range(q_in.qsize()):
             frame = q_in.get()
+        t1 = time.time()
+        time.sleep(max(0, 1./fps - (t1-t0)))
 
 if __name__ == '__main__':    
     cap = cv2.VideoCapture(0)
@@ -27,8 +30,6 @@ if __name__ == '__main__':
         print "Cannot open stream of index " + str(stream_index)
         exit(1)
 
-    #cap.set(3, 1280)
-    #cap.set(4, 720)
     print "Video stream is of resolution " + str(cap.get(3)) + " x " + str(cap.get(4))
 
     conn = angus.connect()
@@ -37,16 +38,20 @@ if __name__ == '__main__':
     
     q_in = Queue()
     q_out = Queue()
-    process = Process(target=angus_process, args=(q_in, q_out))
+    process = Process(target=angus_process, args=(q_in, q_out, 10))
     process.start()
-
+    res = {'faces': []}
+        
     while(cap.isOpened()):
         ret, frame = cap.read()
         if not ret:
             continue
 
-        q_in.put(frame)
-        res = q_out.get()
+        q_in.put(frame.copy())
+        try:
+            res = q_out.get(False)
+        except Empty:
+            pass
 
         for face in res['faces']:
             roi = face['roi']
