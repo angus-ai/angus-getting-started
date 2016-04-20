@@ -24,7 +24,8 @@ def angus_process(q_in, q_out, fps):
         time.sleep(max(0, 1./fps - (t1-t0)))
 
 if __name__ == '__main__':    
-    cap = cv2.VideoCapture(0)
+    stream_index = 0
+    cap = cv2.VideoCapture(stream_index)
 
     if not cap.isOpened():
         print "Cannot open stream of index " + str(stream_index)
