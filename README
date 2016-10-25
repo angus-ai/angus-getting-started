@@ -29,5 +29,6 @@ Directories:
 │   └── stream_motion.py
 │   └── stream_wordspotting_v1.py
 │   └── stream_wordspotting_v2.py
+│   └── stream_sceneanalysis.py
 │   └── texttospeech.py
 └── README
