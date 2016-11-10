@@ -30,5 +30,6 @@ Directories:
 │   └── stream_wordspotting_v1.py
 │   └── stream_wordspotting_v2.py
 │   └── stream_sceneanalysis.py
+│   └── stream_upperbodydetection.py
 │   └── texttospeech.py
 └── README
