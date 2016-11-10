@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     service.enable_session()
 
-    while(cap.isOpened()):
+    while cap.isOpened():
         ret, frame = cap.read()
         if not frame == None:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

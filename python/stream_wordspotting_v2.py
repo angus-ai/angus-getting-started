@@ -8,8 +8,6 @@ import time
 import angus
 import numpy as np
 import pyaudio
-import os
-import operator
 import json
 
 CHUNK = 8192*2
@@ -34,8 +32,8 @@ devinfo = p.get_device_info_by_index(INDEX)
 print devinfo
 
 for i in range(p.get_device_count()):
-  dev = p.get_device_info_by_index(i)
-  print((i,dev['name'],dev['maxInputChannels']))
+    dev = p.get_device_info_by_index(i)
+    print (i, dev['name'], dev['maxInputChannels'])
 
 conn = angus.connect()
 service = conn.services.get_service('word_spotting', version=2)
@@ -63,7 +61,7 @@ stream = p.open(format=FORMAT,
 
 stream.start_stream()
 
-while(True):
+while True:
 
     nb_buffer_available = stream_queue.qsize()
 #    if nb_buffer_available > 0:

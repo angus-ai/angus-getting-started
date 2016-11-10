@@ -4,9 +4,9 @@ import cv2
 import angus
 import numpy as np
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     ### Web cam index might be different from 0 on your setup.
-    stream_index = 0 
+    stream_index = 0
     cap = cv2.VideoCapture(stream_index)
 
     if not cap.isOpened():
@@ -17,8 +17,8 @@ if __name__ == '__main__':
 
     conn = angus.connect()
     service = conn.services.get_service("face_recognition", version=1)
-    
-    ### Choose here the appropriate pictures. 
+
+    ### Choose here the appropriate pictures.
     ### Pictures given as samples for the album should only contain 1 visible face.
     ### You can provide the API with more than 1 photo for a given person.
     w1_s1 = conn.blobs.create(open("./images/gwenn.jpg"))
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     service.enable_session({"album" : album})
 
-    while(cap.isOpened()):
+    while cap.isOpened():
         ret, frame = cap.read()
         if not frame == None:
 
@@ -43,8 +43,8 @@ if __name__ == '__main__':
             if res['nb_faces'] > 0:
                 for i in range(0,res['nb_faces']):
                     roi = res['faces'][i]['roi']
-                    cv2.rectangle(frame, (int(roi[0]), int(roi[1])), 
-                                         (int(roi[0] + roi[2]), int(roi[1] + roi[3])), 
+                    cv2.rectangle(frame, (int(roi[0]), int(roi[1])),
+                                         (int(roi[0] + roi[2]), int(roi[1] + roi[3])),
                                          (0,255,0))
                     if len(res['faces'][i]['names']) > 0:
                         name = res['faces'][i]['names'][0]['key']
