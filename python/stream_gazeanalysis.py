@@ -1,29 +1,28 @@
 #!/usr/bin/env python
 import StringIO
-
-import sys
-import math as m
+import pprint
+from math import sin, cos
 import cv2
-
 import numpy as np
 import angus
 
+LINETH = 3
+
 if __name__ == '__main__':
-    
+
     ### To grab the host computer web cam instead of a given file, try:
-    ### cap = cv2.VideoCapture(0)
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640);
-    cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480);
+    cap.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
 
     print "Input stream is of resolution: " + str(cap.get(3)) + " x " + str(cap.get(4))
     conn = angus.connect()
     service = conn.services.get_service('gaze_analysis', 1)
     service.enable_session()
-    
-    while(cap.isOpened()):
+
+    while cap.isOpened():
         ret, frame = cap.read()
-        if(frame != None):
+        if frame != None:
             ### angus.ai computer vision services require gray images right now.
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             ret, buff = cv2.imencode(".png", gray)
@@ -32,36 +31,42 @@ if __name__ == '__main__':
             job = service.process({"image": buff})
             res = job.result
 
-            print "---------- Raw answer from Angus.ai -----------" 
-            print res
-            print "-----------------------------------------------" 
+            print "---------- Raw answer from Angus.ai -----------"
+            pprint.pprint(res)
+            print "-----------------------------------------------"
 
-            
+
             if res['nb_faces'] > 0:
-                for i in range(0,res['nb_faces']):
-                    roi = res['faces'][i]['roi']
-                    cv2.rectangle(frame, (int(roi[0]), int(roi[1])), 
-                                         (int(roi[0] + roi[2]), int(roi[1] + roi[3])),
-                                         (0,255,0))
+                for h in res['faces']:
+                    nose = h['nose']
+                    nose = (nose[0], nose[1])
+                    eyel = h['eye_left']
+                    eyel = (eyel[0], eyel[1])
+                    eyer = h['eye_right']
+                    eyer = (eyer[0], eyer[1])
 
-                    roll = res['faces'][i]['head_roll']
-                    yaw = res['faces'][i]['head_yaw']
-                    pitch = res['faces'][i]['head_pitch']
-                    
-                    center = (int(roi[0] + 0.5*roi[2]), int(roi[1] + 0.5*roi[3]))
-                        
-                    phi = pitch
-                    psi = roll
-                    theta = - yaw
-                    
+                    psi = h['head_roll']
+                    theta = - h['head_yaw']
+                    phi = h['head_pitch']
+
                     length = 150
-                    ### See here for details : https://en.wikipedia.org/wiki/Rotation_formalisms_in_three_dimensions
-                    xvec = length*(m.sin(phi)*m.sin(psi) - m.cos(phi)*m.sin(theta)*m.cos(psi))
-                    yvec = - length*(m.sin(phi)*m.cos(psi) - m.cos(phi)*m.sin(theta)*m.sin(psi))
-                    vec = (int(xvec), int(yvec))
+                    xvec = int(length*(sin(phi)*sin(psi) - cos(phi)*sin(theta)*cos(psi)))
+                    yvec = int(- length*(sin(phi)*cos(psi) - cos(phi)*sin(theta)*sin(psi)))
+                    cv2.line(frame, nose, (nose[0]+xvec, nose[1]+yvec), (0, 140, 255), LINETH)
 
-                    cv2.line(frame, center, (center[0]+vec[0], center[1]+vec[1]), (255, 0, 0), 3)
-            
+                    psi = 0
+                    theta = - h['gaze_yaw']
+                    phi = h['gaze_pitch']
+
+                    length = 150
+                    xvec = int(length*(sin(phi)*sin(psi) - cos(phi)*sin(theta)*cos(psi)))
+                    yvec = int(- length*(sin(phi)*cos(psi) - cos(phi)*sin(theta)*sin(psi)))
+                    cv2.line(frame, eyel, (eyel[0]+xvec, eyel[1]+yvec), (0, 140, 0), LINETH)
+
+                    xvec = int(length*(sin(phi)*sin(psi) - cos(phi)*sin(theta)*cos(psi)))
+                    yvec = int(- length*(sin(phi)*cos(psi) - cos(phi)*sin(theta)*sin(psi)))
+                    cv2.line(frame, eyer, (eyer[0]+xvec, eyer[1]+yvec), (0, 140, 0), LINETH)
+
 
             cv2.imshow('Gaze Analysis', frame)
 
